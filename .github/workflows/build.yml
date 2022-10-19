@@ -1,0 +1,78 @@
+name: build
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        platform:
+        - host: macos-latest
+          target: aarch64-apple-darwin
+          test-bin: file ./result/bin/wash
+          test-oci: true
+
+        - host: macos-latest
+          target: wasm32-wasi
+          test-bin: echo "exit" | nix run --inputs-from . 'nixpkgs#wasmtime' -- run --dir / ./result/bin/wash
+          test-oci: echo "OCI runtime missing, skip test"
+
+        - host: macos-latest
+          target: x86_64-apple-darwin
+          test-bin: echo "exit" | ./result/bin/wash
+          test-oci: echo "OCI runtime missing, skip test"
+
+        - host: ubuntu-latest
+          target: aarch64-unknown-linux-musl
+          test-bin: echo "exit" | nix shell --inputs-from . 'nixpkgs#qemu' -c qemu-aarch64 ./result/bin/wash
+          test-oci: docker load < ./result
+
+        - host: ubuntu-latest
+          target: wasm32-wasi
+          test-bin: echo "exit" | nix run --inputs-from . 'nixpkgs#wasmtime' -- run --dir / ./result/bin/wash
+          test-oci: docker load < ./result
+
+        - host: ubuntu-latest
+          target: x86_64-unknown-linux-musl
+          test-bin: echo "exit" | ./result/bin/wash
+          test-oci: |
+            docker load < ./result
+            echo "exit" | docker run --rm wash:$(nix eval --raw .#wash-x86_64-unknown-linux-musl-oci.imageTag)
+
+    runs-on: ${{ matrix.platform.host }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: cachix/install-nix-action@v18
+      with:
+        extra_nix_config: |
+          access-tokens = github.com=${{ github.token }}
+    - uses: cachix/cachix-action@v11
+      with:
+        name: rvolosatovs
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+    - uses: cachix/cachix-action@v11
+      with:
+        name: enarx
+
+    - run: nix build -L --show-trace '.#wash-${{ matrix.platform.target }}'
+    - run: nix run --inputs-from . 'nixpkgs#coreutils' -- --coreutils-prog=ginstall -p ./result/bin/wash "wash-${{ matrix.platform.target }}"
+    - uses: actions/upload-artifact@v3
+      with:
+        name: wash-${{ matrix.platform.target }}
+        path: wash-${{ matrix.platform.target }}
+    - run: ${{ matrix.platform.test-bin }}
+
+    - run: nix build -L --show-trace '.#wash-${{ matrix.platform.target }}-oci'
+    - run: nix run --inputs-from . 'nixpkgs#coreutils' -- --coreutils-prog=ginstall -p ./result "wash-${{ matrix.platform.target }}-oci"
+    - uses: actions/upload-artifact@v3
+      with:
+        name: wash-${{ matrix.platform.target }}-oci
+        path: wash-${{ matrix.platform.target }}-oci
+    - run: ${{ matrix.platform.test-oci }}
