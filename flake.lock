@@ -68,11 +68,11 @@
         "nixify": "nixify"
       },
       "locked": {
-        "lastModified": 1666258907,
-        "narHash": "sha256-MFzyXsi0J5AV42KNwkKn65tltG+ggwJCIH7muYM1fc0=",
+        "lastModified": 1666275919,
+        "narHash": "sha256-mFe35+lnV1kxkYYn2sZg6jjC2eGnpjP6Zj2z/egBq7c=",
         "owner": "enarx",
         "repo": "enarx",
-        "rev": "98fb2a366d309c33258f84948f0eb42891ab6eaf",
+        "rev": "8a267232315b1a47a621ea1a9466dd1a4743ae62",
         "type": "github"
       },
       "original": {
@@ -174,11 +174,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1666269890,
-        "narHash": "sha256-KJ6kg199i4XCPltxx1d8ouGK1jeh1uCBcopJ7EJS6VI=",
+        "lastModified": 1666279775,
+        "narHash": "sha256-xUJvmLzb/9ZX79EbHrRKLI+C56XInkzPjYK2xxfGrHI=",
         "owner": "rvolosatovs",
         "repo": "nixify",
-        "rev": "3e6e8036be0b44cf7c8fe655a9c261c1ed8b3d9a",
+        "rev": "2d88ef3c5e62ce416d2ea5da41602bf439ff04f9",
         "type": "github"
       },
       "original": {
