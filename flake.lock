@@ -70,11 +70,11 @@
         "nixify": "nixify"
       },
       "locked": {
-        "lastModified": 1668642175,
-        "narHash": "sha256-bah6tFVHTlbB3cjGcsWIQibhoFQe4Cj8MwkdA24GGzI=",
+        "lastModified": 1668706300,
+        "narHash": "sha256-NlZBWlYP6fF++5AFzXCRrrqk4GyzzvHaC5F5XeaQzbg=",
         "owner": "enarx",
         "repo": "enarx",
-        "rev": "845eef4444c3b62b242d7bfcd5465de0ee01d8f2",
+        "rev": "09bce3fd923bbbb52aac185c5858e377b949f043",
         "type": "github"
       },
       "original": {
